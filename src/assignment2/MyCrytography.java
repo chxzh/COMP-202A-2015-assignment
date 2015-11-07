@@ -4,6 +4,7 @@ import java.util.Random;
 
 /*
  * this is my personal solution of assignment 2, COMP202A on 2015
+ * confidence will make this into a test case reference
  * */
 public class MyCrytography {
 	public static void main(String[] args){
