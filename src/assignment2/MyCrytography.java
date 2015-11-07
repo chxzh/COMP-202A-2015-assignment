@@ -8,7 +8,7 @@ import java.util.Random;
  * */
 public class MyCrytography {
 	public static void main(String[] args){
-		System.out.println(caesarEncrypt("abc xyz", 1));
+		System.out.println(crackCipher(caesarEncrypt("hello world", 1), 10));
 		System.out.println("end of main");
 		return;
 	}
@@ -38,7 +38,7 @@ public class MyCrytography {
 		return caesarEncrypt(encoded, -shift);
 	}
 	
-	public static String crackCyphere(String encoded, int numberLetters) {
+	public static String crackCipher(String encoded, int numberLetters) {
 		String result = "", curDecrypted;
 		int maxWordCount = -1, curWordCount;
 		for (int i = 0; i < numberLetters; i++) {
