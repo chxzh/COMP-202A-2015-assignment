@@ -2,6 +2,9 @@ package assignment2;
 
 import java.util.Random;
 
+/*
+ * this is my personal solution of assignment 2, COMP202A on 2015
+ * */
 public class MyCrytography {
 	public static void main(String[] args){
 		System.out.println(caesarEncrypt("abc xyz", 1));
