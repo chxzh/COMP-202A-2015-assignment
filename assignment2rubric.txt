@@ -15,41 +15,41 @@ Full marks if they adapted their Q1 solution for this question:
 -handling punctuation (3 points)
 
 3.cracking the code (20 points)
--properly using the countWords method (1 points)
--calling the decrypt (or encrypt) method (4 points)
--generalized for numLetters (no hardcoding of 26) (2 points)
--loop to try again and again (5 points)
--take the maximum value (8 points)
+	-properly use the countWords method (1 points)
+	-call the decrypt (or encrypt) method (4 points)
+	-generalize for numLetters (no hardcoding of 26) (2 points)
+	-loop to try again and again (5 points)
+	-take the maximum value (8 points)
 
 4.shuffle (15 points)
--Create Random object, outside of the loop (3 points)
--loop to repeat n^4 times (3 points)
--choose two random values inside the loop (4 points)
--swap (must be accurate, usually by using a temporary 3rd variable) (3 points)
--Modify the input array (don't create a new one) (2 points)
+	-create Random object, outside of the loop (3 points)
+	-loop to repeat n^4 times (3 points)
+	-choose two random values inside the loop (4 points)
+	-swap accurately (usually by using a temporary 3rd variable) (3 points)
+	-modify the input array (instead of creating a new one) (2 points)
 
 5.generateMapping() (10 points)
--create an array (2 points)
--fill the array with A-Z (4 points)
--call shuffle and then return the shuffled array (4 points)
+	-create an array (2 points)
+	-fill the array with A-Z (4 points)
+	-call shuffle and then return the shuffled array (4 points)
 
 6: permuteEncrypt() (30 points)
--create random permutation using method from question 5 (3 points)
--loop to go through every char of the string (5 points)
--concatenate string together (4 points)
--look up correct value in an array (10 points)
--no change to punctuation (4 points)
--lowercase letters should be mapped to EITHER the uppercase or lowercase version of the array returned by generateMapping() (4 points)
+	-create random permutation using method from question 5 (3 points)
+	-loop through every char of the string (5 points)
+	-concatenate strings together (4 points)
+	-look up correct value in an array (10 points)
+	-keep punctuation unchaged (4 points)
+	-map lowercase letters to EITHER the uppercase or lowercase version of the array returned by generateMapping() (4 points)
 
 Common mistakes:
--5 if students use 26 if statements for permuteEncrypt()  (instead of smartly looking values up)
+	-5 if students use 26 if statements for permuteEncrypt()  (instead of smartly looking values up)
 -No deduction if students don't use the helper methods that they wrote in previous questions, that is OK for their mark (no deduction, a comment would be nice in the feedback
 -No deduction for hard-coding char[] alphabet = {A,B,C,D,...,Z};
 -No deduction if students `permute encrypt' backwards - ie: if shuffledArray={Q,F,N,...} if they map N to C instead of C to N. Leave a comment to let them know what was actually asked of them. 
 -20% on a question for method headers that are wrong (it's OK if a method that is supposed to return void returns something)
--5 points if they do not seed the random number object with 12345
+	-5 points if they do not seed the random number object with 12345
 -25 points if they submit the .class file or other wrong files *provided that you can verify the actual files*
--5 points for no comments at all
+	-5 points for no comments at all
 -5 points if cryptography.java instead of Cryptography.java
 -10 points if somethingrandom.java instead of Cryptography.java
 -25% on a question per type of run time error (max of 50%). 

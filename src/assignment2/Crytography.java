@@ -6,7 +6,7 @@ import java.util.Random;
  * this is my personal solution of assignment 2, COMP202A on 2015
  * confidence will make this into a test case reference
  * */
-public class MyCrytography {
+public class Crytography {
 	public static void main(String[] args){
 		System.out.println(crackCipher(caesarEncrypt("hello world", 1), 10));
 		System.out.println("end of main");
