@@ -52,12 +52,12 @@ public class Grader {
 			String remark) {
 		String expected, result;
 		if(isEncryption) {
-			expected = MyCrytography.caesarEncrypt(input, shift);
-			result = MyCrytography.caesarEncrypt(input, shift);
+			expected = MyCryptography.caesarEncrypt(input, shift);
+			result = MyCryptography.caesarEncrypt(input, shift);
 		}
 		else {
-			expected = MyCrytography.caesarDecrypt(input, shift);
-			result = MyCrytography.caesarDecrypt(input, shift);
+			expected = MyCryptography.caesarDecrypt(input, shift);
+			result = MyCryptography.caesarDecrypt(input, shift);
 		}
 		checkString(expected, result, deduction, remark);
 	}
@@ -106,9 +106,9 @@ public class Grader {
 	
 	@Test
 	public void testShuffleFunction() {
-		this.manualCheck("shuffle()", "create Random object, outside of the loop", 3);
+		this.manualCheck("shuffle()", "create the Random object outside of the loop", 3);
 		this.manualCheck("shuffle()", "loop to repeat n^4 times", 3);
-		this.manualCheck("shuffle()", "choose two random values inside the loop", 4);
+		this.manualCheck("shuffle()", "choose TWO random values inside the loop", 4);
 		this.manualCheck("shuffle()", "swap accurately (usually by using a temporary 3rd variable)", 3);
 		this.manualCheck("shuffle()", "modify the input array (instead of creating a new one)", 2);
 		this.manualCheck("shuffle()", "use the random seed of 12345", 5);
