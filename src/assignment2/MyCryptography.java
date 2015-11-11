@@ -8,7 +8,7 @@ import java.util.Random;
  * */
 public class MyCryptography {
 	public static void main(String[] args){
-		System.out.println(crackCipher(caesarEncrypt("hello world", 1), 10));
+		System.out.println(caesarDecrypt("ab,xyz", 2));
 		System.out.println("end of main");
 		return;
 	}
@@ -35,7 +35,7 @@ public class MyCryptography {
 	}
 	
 	public static String caesarDecrypt(String encoded, int shift) {
-		return caesarEncrypt(encoded, -shift);
+		return caesarEncrypt(encoded, 26-shift);
 	}
 	
 	public static String crackCipher(String encoded, int numberLetters) {

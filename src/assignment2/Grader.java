@@ -53,11 +53,11 @@ public class Grader {
 		String expected, result;
 		if(isEncryption) {
 			expected = MyCryptography.caesarEncrypt(input, shift);
-			result = MyCryptography.caesarEncrypt(input, shift);
+			result = Cryptography.caesarEncrypt(input, shift);
 		}
 		else {
 			expected = MyCryptography.caesarDecrypt(input, shift);
-			result = MyCryptography.caesarDecrypt(input, shift);
+			result = Cryptography.caesarDecrypt(input, shift);
 		}
 		checkString(expected, result, deduction, remark);
 	}
@@ -88,18 +88,18 @@ public class Grader {
 	@Test
 	public void testDecryptFuction() {
 		this.checkCaesar("Nm", 3, false, 
-				4, "caesarEncrypt() cannot handle upper/lower case letters encryption");
+				4, "caesarDecrypt() cannot handle upper/lower case letters encryption");
 		this.checkCaesar("abxyz", 3, false,
-				3, "caesarEncrypt() cannot cycling around alphabet");
+				3, "caesarDecrypt() cannot cycling around alphabet");
 		this.checkCaesar("N,! m", 3, false,
-				3, "caesarEncrypt() cannot handling punctuation");
+				3, "caesarDecrypt() cannot handling punctuation");
 	}
 	
 	@Test
 	public void testCrackingFunction() {
 		this.manualCheck("crackCipher()", "properly use the countWords method", 1);
 		this.manualCheck("crackCipher()", "call the decrypt (or encrypt) method", 4);
-		this.manualCheck("crackCipher()", "generalize for numLetters", 2);
+		this.manualCheck("crackCipher()", "generalize properly for numLetters", 2);
 		this.manualCheck("crackCipher()", "loop to try again and again", 5);
 		this.manualCheck("crackCipher()", "take the maximum value", 8);
 	}
