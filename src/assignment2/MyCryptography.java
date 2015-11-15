@@ -8,7 +8,7 @@ import java.util.Random;
  * */
 public class MyCryptography {
 	public static void main(String[] args){
-		System.out.println(caesarDecrypt("ab,xyz", 2));
+		System.out.println(caesarDecrypt("ABCMNOPQRSTUVWXYZ", 3));
 		System.out.println("end of main");
 		return;
 	}
@@ -24,10 +24,9 @@ public class MyCryptography {
 			 * however isLetter is not permitted for students
 			 * */
 			if (Character.isLetter(currentLetter)) {
-				currentLetter += shift;
-				if (! Character.isLetter(currentLetter)){
-					currentLetter -= 26;
-				}
+				char starter = Character.isUpperCase(currentLetter)?'A':'a';
+				int index = currentLetter - starter;
+				currentLetter = (char)(starter + (index+shift)%26);
 			}
 			result.append(currentLetter);
 		}
