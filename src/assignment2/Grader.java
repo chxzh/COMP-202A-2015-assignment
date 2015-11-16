@@ -20,6 +20,11 @@ public class Grader {
 	}
 	
 	@AfterClass
+	public static void finish() {
+		Grader.checkGeneral();
+		Grader.summarize();
+	}
+	
 	public static void summarize() {
 		System.out.println("------");
 		System.out.println(Grader.grade);
@@ -30,23 +35,35 @@ public class Grader {
 		System.out.println(Grader.signature);
 	}
 	
-	private void deductWithRemark(int deduction, String remark) {
+	private static void discountWithRemark(double discount, String remark) {
+		Grader.grade = (int)(Grader.grade*(1-discount)) + 1;
+		Grader.remark.append("- ");
+		Grader.remark.append(remark);
+		Grader.remark.append(" (-"+(int)(discount*100)+")");
+		Grader.remark.append("\n");
+	}
+	
+	private static void deductWithRemark(int deduction, String remark) {
 		Grader.grade -= deduction;
 		Grader.remark.append("- ");
 		Grader.remark.append(remark);
 		Grader.remark.append(" (-"+deduction+")");
-		Grader.remark.append('\n');
+		Grader.remark.append("\n");
 		
 	}
-	private void checkString(String expected, String result, int deduction, String failRemark) {
+	private static void checkString(String expected, String result, int deduction, String failRemark) {
 		if(!expected.equals(result)) {
-			this.deductWithRemark(deduction, failRemark);
+			deductWithRemark(deduction, failRemark);
 			System.out.println(expected+" != "+result);
 			//Assert.assertTrue(false);
 		}
 	}
 	
-	private void checkCaesar(String input, 
+	private static void checkGeneral() {
+		
+	}
+	
+	private static void checkCaesar(String input, 
 			int shift, 
 			boolean isEncryption, 
 			int deduction, 
@@ -66,7 +83,7 @@ public class Grader {
 	private void manualCheck(String functionName, String action, int deduction) {
 		System.out.println("Did "+functionName+" "+action+"?");
 		if(!sc.nextLine().equals("")) {
-			this.deductWithRemark(deduction, functionName+" didn't "+action);
+			Grader.deductWithRemark(deduction, functionName+" didn't "+action);
 		}
 	}
 	
@@ -75,12 +92,12 @@ public class Grader {
 	 */
 	@Test
 	public void testEncrytFunction() {
-		this.checkCaesar("Nm", 3, true, 
+		Grader.checkCaesar("Nm", 3, true, 
 				5, "caesarEncrypt() cannot handle upper/lower case letters encryption");
-		this.checkCaesar("abxyz", 3, true,
-				5, "caesarEncrypt() cannot cycling around alphabet");
-		this.checkCaesar("n,! m", 3, true,
-				5, "caesarEncrypt() cannot handling punctuation");
+		Grader.checkCaesar("abxyz", 3, true,
+				5, "caesarEncrypt() cannot cycle around alphabet");
+		Grader.checkCaesar("n,! m", 3, true,
+				5, "caesarEncrypt() cannot handle punctuation");
 	}
 	
 	/*
@@ -88,12 +105,12 @@ public class Grader {
 	 */
 	@Test
 	public void testDecryptFuction() {
-		this.checkCaesar("Nm", 3, false, 
+		Grader.checkCaesar("Nm", 3, false, 
 				4, "caesarDecrypt() cannot handle upper/lower case letters encryption");
-		this.checkCaesar("abxyz", 3, false,
-				3, "caesarDecrypt() cannot cycling around alphabet");
-		this.checkCaesar("n,! m", 3, false,
-				3, "caesarDecrypt() cannot handling punctuation");
+		Grader.checkCaesar("abxyz", 3, false,
+				3, "caesarDecrypt() cannot cycle around alphabet");
+		Grader.checkCaesar("n,! m", 3, false,
+				3, "caesarDecrypt() cannot handle punctuation");
 	}
 	
 	@Test
@@ -130,7 +147,7 @@ public class Grader {
 		this.manualCheck("permuteEncrypt()", "loop through every char of the string", 5);
 		this.manualCheck("permuteEncrypt()", "concatenate strings together", 4);
 		this.manualCheck("permuteEncrypt()", "look up correct value in an array", 10);
-		this.manualCheck("permuteEncrypt()", "keep punctuation unchaged", 4);
+		this.manualCheck("permuteEncrypt()", "keep punctuation unchanged", 4);
 		this.manualCheck("permuteEncrypt()", "map lowercase letters to EITHER uppercase or lowercase returned by generateMapping()", 4);
 		this.manualCheck("permuteEncrypt()", "avoid using 26 if-statements", 5);
 	}
