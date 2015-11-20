@@ -35,7 +35,7 @@ public class CardPile {
 		return removedCard;
 	}
 	
-	public int find(Card.Suit s, Card.Value v) {
+	public int find(Suit s, Value v) {
 		int result = -1;
 		for (int i = 0; i < this.numCards; i ++) {
 			Card card = this.cards[i];
@@ -57,7 +57,12 @@ public class CardPile {
 	}
 	
 	public static CardPile makeFullDeck(){
-		return null;
+		CardPile fullDeck = new CardPile();
+		for(Suit s: Suit.values())
+			for(Value v: Value.values())
+				fullDeck.addToBottom(new Card(s,v));
+		UtilityCode.fisherYatesShuffle(fullDeck.cards, fullDeck.numCards);
+		return fullDeck;
 	}
 	
 	public static void main(String[] args) {

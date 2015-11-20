@@ -1,8 +1,6 @@
 package assignment3;
 
 public class Card {
-	public enum Suit {SPADES, HEARTS, CLUBS, DIAMONDS};
-	public enum Value {ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
 	private Suit suit;
 	private Value value;
 	
