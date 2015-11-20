@@ -8,9 +8,7 @@ import java.util.Random;
  * */
 public class MyCryptography {
 	public static void main(String[] args){
-		System.out.println(caesarDecrypt("ABCMNOPQRSTUVWXYZ", 3));
-		System.out.println(caesarEncrypt("GO ranger!", 3));
-		System.out.println(caesarDecrypt("JR udqjhu!", 3));
+		System.out.println(caesarEncrypt("##Hi my name is 123!", 5));
 		System.out.println("end of main");
 		return;
 	}
