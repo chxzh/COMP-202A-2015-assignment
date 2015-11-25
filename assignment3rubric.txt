@@ -1,0 +1,95 @@
+Grading rubric for assignment 3.
+
+General guidelines:
+
+If the code doesn't compile, try briefly to fix it. 
+If it is a trivial mistake that you can fix in under 1 minute, then deduct points as you would for any other sort of error.
+If it is a non trivial mistake and appears that they never ran the code at all, then the most they can get for that question is 25%. Less if they don't even have much work.
+
+The point allocations are based on the method we expected students would probably use. 
+If a student uses a completely different (but equally valid) solution, they should of course still get full credit. The rationale behind the detail is to make it clear how many points to deduct when a student implements an *invalid* solution.
+
+***Important*****
+If there is a bug in the students code you need to tell the student in feedback where the bug came from and roughly how to fix it. If you cannot understand the code enough to find the bug, then it is impossible for you to make a judgement call as to how serious the mistake was.
+If their code is just completely wrong or missing stuff, it is fine to simply say "your code to handle some specific scenario is missing"
+
+Example feedbacks. Suppose that after calling remove() on a CardPile, a bug appears. Your feedback could look like the below examples:
+Example 1: After removing a Card from a CardPile, duplicates appear. This is caused by line 34 of CardPile.java : You need to set cards[i] to be null to avoid duplicating the card.
+Example 2: You have no code to fill in the gaps in the Card[]. After removing the Card from the Card[], the values need to be shifted.
+
+Sudoku (40 points)
+-sort 10 points total
+	- (-5 points) if they sort the input array instead of sorting a copy.
+	- (-3 points) if they don't handle duplicates properly.
+	- (-1 point) per off-by-one error.
+	- No marks given if they use Arrays.sort() (or an equivalent)
+
+-uniqueEntries 5 points total
+	- note: they are *not* required to use their sort method here, although it makes things easier. If they use their sort method, but the sort method doesn't work, grade this question assuming that sort was implemented correctly.
+	-  (-3 points) If they assume that the array is sorted, but don't call their sort method first.
+
+-getColumn 3 points total
+
+-flatten 6 points total
+	Note: they are allowed to assume that the input array is square
+
+-subGrid 8 points total
+	Note: they are allowed to assume that the input array is square
+	- (-3 points) If they don't catch index out of bounds errors in the input. Anything they do to deal with it is fine, as long as the code doesn't crash. 
+	- (-1 point) if they reverse the meaning of (i,j). 
+
+-isSudoku method logic to tie everything together 8 points
+	Note: They are allowed to assuming NOTHING about the input. 
+	- In general, (-3 points) if their code crashes due to bad assumptions (not per assumption) - However, only take off 1 point if they assume non-null input (either for the parent array, or the sub-arrays).  
+	- 1 point for checking the rows
+	- 1 point for checking the columns
+	- 2 points for checking the corerct sub-grids
+	- 1 point for checking the range (1-9)
+	- 1 point for checking the length of all of the arrays
+	- 2 points for combining all the results properly and returning the correct answer.
+
+General points: At no point should they be modifying the input. If, by some magic, their code still works even though they change the input, take off 5 points (total - not per method. This is most likely to happen in sort). In addition, if you've read this, send us a hipchat with the subject ghost arrays. You are not allowed to reveal why you have said this.
+We never specify whether their required helper methods should be public or private. Their isSudoku() method should clearly be public (-1 if private). Do not deduct marks for public/private modifiers in the other methods.
+They are permitted to write additional helper methods.
+
+//b is a valid sudoku solution
+//feel free to use this puzzle in your grading. It is easier to randomly generate a wrong answer than a right one :)
+    int[][] b = {{5,9,1,7,8,2,3,4,6},
+      {4,6,7,9,5,3,8,1,2},
+      {3,8,2,1,6,4,7,9,5},
+      {8,1,5,6,3,9,4,2,7},
+      {9,7,3,4,2,1,5,6,8},
+      {6,2,4,5,7,8,9,3,1},
+      {1,3,8,2,9,7,6,5,4},
+      {2,5,9,8,4,6,1,7,3},
+      {7,4,6,3,1,5,2,8,9}};
+
+Card (10 points)
+-constructor and getters (5 points)
+-toString (5 points) 
+
+CardPile (40 points)
+-constructor (2 points)
+-addToBottom (4 points)
+-isEmpty (2 points)
+-get (2 points)
+-remove (8 points)
+-find (8 points)
+-toString (8 points)
+-makeFullDeck (6 points)
+
+CardGame (10 points)
+-dealing the cards out (includes initializing cardpiles) (5 points)
+-searching for ace of spades and printing winner (5 points)
+
+
+Common issues:
+-toString methods could print in any format as long as the information was conveyed
+-in CardGame, it does not matter if they print the winner counting from 0 or 1.
+-methods inside CardPile could either iterate over the entire card array OR they could use numCards to cleverly save time. Either way is fine for full credit as long as the results are correct.
+-If they add extra public methods to their code, you should add a comment in the feedback that this was a bad idea. For the first OOP assignment, we will not deduct marks for this.
+-Runtime errors that occur all the time (i.e. not just an edge case), deduct at least 50% for that question, since their code never "works"
+-If CardPile constructor takes as input extra arguments, you should add a comment in the feedback. You do not need to deduct marks directly for this.
+-If makeFullDeck returns a Card[] object instead of a CardPile object, do not deduct marks because the assignment specification was ambiguous. You should add a comment to the feedback.
+
+
