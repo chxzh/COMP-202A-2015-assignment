@@ -65,22 +65,22 @@ They are permitted to write additional helper methods.
       {7,4,6,3,1,5,2,8,9}};
 
 Card (10 points)
--constructor and getters (5 points)
--toString (5 points) 
+    -constructor and getters (5 points)
+    -toString (5 points) 
 
 CardPile (40 points)
--constructor (2 points)
--addToBottom (4 points)
--isEmpty (2 points)
--get (2 points)
--remove (8 points)
--find (8 points)
--toString (8 points)
--makeFullDeck (6 points)
+    -constructor (2 points)
+    -addToBottom (4 points)
+    -isEmpty (2 points)
+    -get (2 points)
+    -remove (8 points)
+    -find (8 points)
+    -toString (8 points)
+    -makeFullDeck (6 points)
 
 CardGame (10 points)
--dealing the cards out (includes initializing cardpiles) (5 points)
--searching for ace of spades and printing winner (5 points)
+    -dealing the cards out (includes initializing cardpiles) (5 points)
+    -searching for ace of spades and printing winner (5 points)
 
 
 Common issues:
