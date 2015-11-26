@@ -1,7 +1,7 @@
 # the yaml version for assignment 3 grading
 _fullmark: 100
 _signature: by cxz
-sudoku: # section for question 1
+Sudoku class: # section for question 1
     _total: 40
     sort(): # subsection
         _total: 10
@@ -34,7 +34,7 @@ sudoku: # section for question 1
             check the length of all arrays: 1
             combine all results properly: 2
             have a public modifier: 1
-    _overall:
+    _overall: # where subject should be the section title
         deduction:
             avoid modifying the input: 5
 cards and card games: # section for question 2, 3 and 4
