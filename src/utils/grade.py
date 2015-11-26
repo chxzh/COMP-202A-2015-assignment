@@ -16,7 +16,8 @@ class Grader:
             self.fullmark = rubric.pop("_fullmark")
             self.overall = rubric.pop("_overall")
         except KeyError as err:
-            print "cannot have root component %s in rubric file %d" % (err.args[0], rubric_path)
+            raise Exception("cannot have root component %s in rubric file %d" % 
+                            (err.args[0], rubric_path))
         # load optional components
         self.signature = self._load_optional(rubric, "_signature", '')
         self.sections = rubric
@@ -29,16 +30,37 @@ class Grader:
         except KeyError:
             return backup
     
+    def has_next(self):
+        pass
+    
+    def grade_next(self):
+        pass
+    
+    def save_current(self):
+        pass
+    
+    def rewind(self):
+        pass
+    
+    def save_rewound(self):
+        pass
+    
+    def save_grumble(self):
+        pass
+    
+    def end_rewind(self):
+        pass
+    
+    def ask(self):
+        pass
+    
+    def ask_rewound(self):
+        pass
+    
     def reset(self):
         self.remark = ""
         self.score = self.fullmark
-            
-    def fill_clipboard(self):
-        pass
-    
-    def grade(self):
-        pass
-    
+        
     def _wrap_up(self):
         pass
     
@@ -46,6 +68,9 @@ class Grader:
         pass
     
     def brief(self):
+        pass
+    
+    def report(self):
         pass
     
     class _Score_point():
@@ -205,6 +230,23 @@ def _handle_args(args):
     else:
         path = args[1]
     return path
+
+def _copy_to_clipboard(content):
+    cb.copy(content)
+    
+class _Grade_Cmd:
+    UNRECOGNIZED = -1
+    REJECT = 0
+    APPROVE = 1
+    REWIND = 2
+    GRUMBLE = 3   
+    
+    @staticmethod
+    def parce_cmd(in_str):
+        cmd = -1
+        deduction = 0
+        remark = ""
+        return cmd, deduction, remark
     
 def _main():
     path = _handle_args(sys.argv)
@@ -214,9 +256,57 @@ def _main():
     start_time = time.localtime()
     while grade_next:
         subm_grad_time = time.time()
-        grader.grade()
-        grader.fill_clipboard()
-        grader.brief()
+        while grader.has_next():
+            settled = False
+            grader.grade_next()
+            while not settled:
+                in_str = raw_input(grader.ask()+'\n')
+                cmd, deduction, remark = _Grade_Cmd.parce_cmd(in_str)
+                if cmd == _Grade_Cmd.APPROVE or cmd == _Grade_Cmd.REJECT:
+                    grader.save_current(deduction, remark)
+                    settled = True
+                elif cmd == _Grade_Cmd.REWIND:
+                    rewinding = True
+                    just_grumbled = False
+                    while rewinding:
+                        if not just_grumbled:
+                            grader.rewind()
+                        else:
+                            just_grumbled = False # reset the grumble state
+                        in_str = raw_input(grader.ask_rewound()+'\n')
+                        cmd, deduction, remark = _Grade_Cmd.parce_cmd(in_str)
+                        if cmd == _Grade_Cmd.APPROVE:
+                            rewinding = False # cancel rewinding
+                        elif cmd == _Grade_Cmd.REJECT:
+                            grade.save_rewound(deduction, remark)
+                            rewinding = False # rewinding complete
+                        elif cmd == _Grade_Cmd.REWIND:
+                            continue # has not rewound to wanted place
+                        elif cmd == _Grade_Cmd.GRUMBLE:
+                            grader.save_grumble(deduction, remark)
+                            just_grumbled = True
+                        else: # unrecognized cmd
+                            print "what? try again?"
+                            # take as a meaningless one
+                            # so don't save
+                            just_grumbled = True                            
+                    # end of rewinding
+                    grader.end_rewind()
+                    # things are unsettled, the current one is
+                    # ungraded, do nothing to continue
+                elif cmd == _Grade_Cmd.GRUMBLE:
+                    grader.save_grumble(deduction, remark)
+                    # finish grumbling and keep on grading
+                else:
+                    print "what did you say? try again?"
+                    # take as a meaningless one
+                    # so don't save
+            # end of while not settled
+            # finished grading the one on hand
+        # end of while grader.has_next()
+        # finished grading all        
+        _copy_to_clipboard(grader.report())
+        print grader.brief()
         is_answered = False
         subm_grad_time = int(time.time() - subm_grad_time)
         print "time taken: %d sec" % subm_grad_time
