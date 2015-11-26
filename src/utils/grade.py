@@ -1,5 +1,5 @@
 import clipboard as cb
-import time, sys
+import time, sys, re
 from boto.mturk.question import AnswerSpecification
 import yaml
 try:
@@ -107,7 +107,7 @@ class Grader:
             if self.remark != "":
                 response += " %s" % (self.remark)
             return response
-        
+         
         def brief_answer(self):
             response = ''
             if deducted:
@@ -240,12 +240,30 @@ class _Grade_Cmd:
     APPROVE = 1
     REWIND = 2
     GRUMBLE = 3   
-    
+    _cmd_dic = {"": APPROVE, # silence approval
+                None: APPROVE,
+                "-a": APPROVE,
+                "-d": REJECT,
+                "-r": REWIND,
+                "-g": GRUMBLE
+                }
+    _cmd_pattern = r'(-\w*)?\s*(-?\d+)?\s*(.+)?'
     @staticmethod
     def parce_cmd(in_str):
-        cmd = -1
+        cmd = UNRECOGNIZED
         deduction = 0
         remark = ""
+        in_str = in_str.strip()
+        try:
+            cmd, deduction, remark = re.match(_cmd_pattern, in_str).group(1,2,3)
+        except TypeError: # likely encountering None
+            pass
+        else:
+            try:  
+                cmd = _cmd_dic[cmd]
+            except KeyError:
+                cmd = UNRECOGNIZED
+            deduction = int(deduction) if deduction != None else 0
         return cmd, deduction, remark
     
 def _main():
