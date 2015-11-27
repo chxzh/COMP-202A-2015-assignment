@@ -1,0 +1,26 @@
+# the yaml version for assignment 3 grading
+fullmark: 24
+signature: by cxz
+Sudoku class: # section for question 1
+    total: 14
+    uniqueEntries():
+        total: 5
+        deduction: 
+            call the sort() instead of presuming a sorted input: 3
+    getColumn():
+        total: 3
+    flatten():
+        total: 6
+    overall: # where subject should be the section title
+        deduction:
+            avoid modifying the input: 5
+cards and card games: # section for question 2, 3 and 4
+    total: 10
+    Card class: # sub section for question 2, likewise in the following
+        total: 10
+        deduction:
+            have a proper constructor and getters: 5
+            have a correct toString(): 5
+overall:
+    deduction:
+        avoid using EXTRA PUBLIC methods: 0

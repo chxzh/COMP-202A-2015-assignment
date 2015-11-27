@@ -49,7 +49,7 @@ cards and card games: # section for question 2, 3 and 4
         deduction:
             have a functional constructor: 2
             # this below is a nondeductin reminder
-            keep the constructor free of extra input arguments: 0 
+            keep the constructor free of extra input arguments: 4 
             have a correct addToBottom(): 4
             have a correct isEmpty(): 2
             have a correct get(): 2
@@ -57,7 +57,7 @@ cards and card games: # section for question 2, 3 and 4
             have a correct find(): 8
             have a correct toString(): 8
             have a functional makeFullDeck(): 6
-            have makeFullDeck() return CardPile object instead of Card[]: 0
+            have makeFullDeck() return CardPile object instead of Card[]: 6
     CardGame class:
         total: 10
         deduction:

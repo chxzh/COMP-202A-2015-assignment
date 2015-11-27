@@ -23,17 +23,19 @@ class _Score_point():
         self.deducted = False
         
     def deduct(self, deduction, remark=""):
+        if deduction < 0:
+            raise TypeError("deduction should not be negative: %d")
         self.deduction = deduction
         self.remark = remark
-        self.deducted = True
+        if deduction > 0: self.deducted = True
     
     def ask(self):
-        return "(%d pt)Did %s %s?" % \
+        return "(%d pt) Did %s %s?" % \
                 (self.total, self.subject, self.action)
     
     def answer(self):
         response = ""
-        if deducted:
+        if self.deducted:
             response = "(-%d) %s didn't %s." % \
                     (self.deduction, self.subject, self.action)
         else:
@@ -44,7 +46,7 @@ class _Score_point():
      
     def brief_answer(self):
         response = ''
-        if deducted:
+        if self.deducted:
             response = '(-%d) no.' % self.deduction
         else:
             response = "yes."            
@@ -55,8 +57,9 @@ class _Score_point():
 
 class _Grumble():
     def __init__(self, deduction, remark):
-        self.deduction = deduction
+        self.deduction = abs(deduction)
         self.remark = remark
+        self.brief_answer = self.answer
     
     def ask(self):
         return 'grumbled that "(-%d) %s"?'% (self.deduction, self.remark)
@@ -87,7 +90,7 @@ class _Subsection():
         for score_point in self.score_points:
             if score_point.deducted:
                 self.total -= score_point.deduction
-                report += "\n- %s" % (score_point.answer)
+                report += "\n - %s" % (score_point.answer())
         self.total = max(0, self.total)
         report = "(%d/%d) %s:%s" % \
                 (self.total, self.fullmark, self.subject, report)
@@ -113,8 +116,8 @@ class _Overall_Section(): # on the same level of _Subsection
         for score_point in self.score_points:
             if score_point.deducted:
                 self.deduction += score_point.deduction
-                report += "\n- %s" % (score_point.answer)
-        self.total = max(0, self.total)
+                report += "\n - %s" % (score_point.answer)
+        self.deduction = max(0, self.deduction)
         if self.deduction != 0:
             report = "(-%d) overall:%s" % \
                     (self.deduction, report)
@@ -138,7 +141,7 @@ class _Section():
     
     def reset(self):
         self.total = self.fullmark
-        for subsec in self.subsection:
+        for subsec in self.subsections:
             subsec.reset()
         self.overall.reset()
     
@@ -146,13 +149,13 @@ class _Section():
         report = ""
         self.total = 0
         for subsec in self.subsections:
-            report += "\n%s" % subsec.report
+            report += "\n%s" % subsec.report()
             self.total += subsec.total
         if self.overall.deduction != 0:
             report += "\n%s" % self.overall.report()
             self.total -= self.overall.deduction
         self.total = max(self.total, 0)
-        report = "---%s (%d/%d)---\n%s" % \
+        report = "---%s (%d/%d)---%s" % \
                 (self.title, self.total, self.fullmark, report)
         return report
 
@@ -177,14 +180,16 @@ class Grader:
         self.sections = [_Section(title, sec_dic) \
                          for title, sec_dic in rubric_dic.iteritems()]
         self.remark = ""
-        self.score = self.fullmark
+        self.total = self.fullmark
         self.records = []
-        self.rewind_stack = []
         self.grumble_list = []
         self._score_point_generator = self._generate_score_points()
         self._next = None
         self._cur = None
+        self._rewind_one = None
+        self._rewind_index = -1 # always a negative index
         self.has_next = False
+        self._clamp = lambda toclamp, total: max(min(toclamp, total), -total)
         self._get_next_ready()
     
     def _get_next_ready(self):
@@ -201,9 +206,9 @@ class Grader:
             for subsection in section.subsections:
                 for score_point in subsection.score_points:
                     yield score_point
-            for score_point in section.overall:
+            for score_point in section.overall.score_points:
                 yield score_point
-        for score_point in self.overall:
+        for score_point in self.overall.score_points:
             yield score_point            
     
     def _load_optional(self, dic, key, backup):
@@ -216,13 +221,13 @@ class Grader:
         self.remark = ""
         self.score = self.fullmark
         self.records = []
-        self.rewind_stack = []
         self.grumble_list = []
         for section in self.sections:
             section.reset()
         self._score_point_generator = self._generate_score_points()
         self._next = None
         self._cur = None
+        self._rewind_one = None
         self.has_next = False
         self._get_next_ready()
             
@@ -231,33 +236,95 @@ class Grader:
         self._get_next_ready()
         pass
     
-    def save_current(self, deduction, remark):
-        self._cur.deduct(deduction, remark)
+    def save_current(self, deduction, remark, deducted=False):
+        deduction = self._clamp(deduction, self._cur.total)
+        if deduction > 0:
+            # which is the granted grade
+            deduction = min(self._cur.total, self._cur.total - deduction)
+        elif deduction < 0:
+            deduction = -deduction
+        elif deduction == 0 and deducted:
+            deduction = self._cur.total
+        self._cur.deduct(deduction, remark)        
+        self.records.append(self._cur)
         pass
     
     def rewind(self):
-        pass
+        try:
+            self._rewind_one = self.records[self._rewind_index]
+            self._rewind_index -= 1
+        except IndexError:
+            self._rewind_one = None
     
-    def save_rewound(self):
-        pass
+    def save_rewound(self, deduction, remark, deducted=True):        
+        deduction = self._clamp(deduction, self._rewind_one.total)
+        try:
+            if deduction > 0:
+                # which is the granted grade
+                deduction = min(self._rewind_one.total, 
+                                self._rewind_one.total - deduction)
+            elif deduction < 0:
+                deduction = -deduction
+            elif deduction == 0 and deducted:
+                deduction = self._rewind_one.total
+            self._rewind_one.deduct(deduction, remark)
+        except AttributeError as ae:
+            if self._rewind_one != None: raise ae
+        finally:
+            self.end_rewind()
     
-    def save_grumble(self):
+    def save_grumble(self, deduction, remark):
+        grumble = _Grumble(deduction, remark)
+        self.grumble_list.append(grumble)
+        self.records.insert(self._rewind_index, grumble)
         pass
     
     def end_rewind(self):
+        self._rewind_index = -1
+        self._rewind_one = None
         pass
     
     def ask(self):
-        pass
+        try:
+            return self._cur.ask()
+        except AttributeError as ae:
+            if self._cur != None: raise ae
+            else: return "there is no more coming for this submission."
     
     def ask_rewound(self):
-        pass
+        try:
+            return "%s\nYou put: \"%s\"" %\
+                    (self._rewind_one.ask(), self._rewind_one.brief_answer())
+        except AttributeError as ae:
+            if self._rewind_one != None: raise ae
+            else: return "There is no more to rewind."
     
+    def wrap_up(self):
+        self.remark = ""
+        self.total = 0
+        for section in self.sections:
+            self.remark += section.report()+'\n'
+            self.total += section.total
+        if self.overall.report() != "":
+            self.remark += "---(-%d)Overall---\n%s\n" %\
+                (self.overall.deduction, self.overall.report())            
+        self.total -= self.overall.deduction
+        if len(self.grumble_list) != 0:
+            grumble_demage = 0
+            grumble_words = ""
+            for grumble in self.grumble_list:
+                grumble_words += grumble.answer() +'\n'
+                grumble_demage += grumble.deduction
+            self.total -= grumble_demage
+            self.remark += "---(-%d)Supplemental remarks---\n" % grumble_demage
+            self.remark += grumble_words
+        self.total = max(self.total, 0)
+        
     def brief(self):
-        pass
+        return "total: %d/%d" % (self.total, self.fullmark)
     
     def report(self):
-        pass
+        return "%s------\n%s\n\n%s" % (self.remark, self.brief(), self.signature)
     
 
 def _judge_answer(answer):
@@ -293,36 +360,47 @@ class _Grade_Cmd:
     REJECT = 0
     APPROVE = 1
     REWIND = 2
-    GRUMBLE = 3   
+    GRUMBLE = 3
+    CANCEL = 4
     _cmd_dic = {"": APPROVE, # silence approval
-                None: APPROVE,
                 "-a": APPROVE,
                 "-d": REJECT,
                 "-r": REWIND,
-                "-g": GRUMBLE
+                "-g": GRUMBLE,
+                "-c": CANCEL
                 }
-    _cmd_pattern = r'(-\w*)?\s*(-?\d+)?\s*(.+)?'
+    _cmd_pattern = r'(-[a-zA-Z]+)?\s*(-?\d+)?\s*(.+)?'
     @staticmethod
     def parce_cmd(in_str):
-        cmd = UNRECOGNIZED
+        cmd = _Grade_Cmd.UNRECOGNIZED
         deduction = 0
         remark = ""
         in_str = in_str.strip()
         try:
-            cmd, deduction, remark = re.match(_cmd_pattern, in_str).group(1,2,3)
+            cmd, deduction, remark = re.match(_Grade_Cmd._cmd_pattern, in_str).group(1,2,3)
         except TypeError: # likely encountering None
             pass
         else:
-            try:  
-                cmd = _cmd_dic[cmd]
+            try:
+                cmd = _Grade_Cmd._cmd_dic[cmd]
             except KeyError:
-                cmd = UNRECOGNIZED
+                if cmd == None:
+                    if deduction == None:
+                        cmd = _Grade_Cmd.APPROVE
+                    else:
+                        cmd = _Grade_Cmd.REJECT
+                else:
+                    cmd = _Grade_Cmd.UNRECOGNIZED
             deduction = int(deduction) if deduction != None else 0
+        finally:
+           if deduction == None: deduction = 0 
+           if remark == None: remark = ""
+#         print "cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark)
         return cmd, deduction, remark
     
 def _main():
-    #path = _handle_args(sys.argv)
-    path = "../../rubrics/assignment3/assignment3rubric.yaml"
+    path = _handle_args(sys.argv)
+#     path = "../../rubrics/assignment3/assignment3rubric.yaml"
     grader = Grader(path)
     grade_next = True
     counter = 0
@@ -335,8 +413,11 @@ def _main():
             while not settled:
                 in_str = raw_input(grader.ask()+'\n')
                 cmd, deduction, remark = _Grade_Cmd.parce_cmd(in_str)
-                if cmd == _Grade_Cmd.APPROVE or cmd == _Grade_Cmd.REJECT:
-                    grader.save_current(deduction, remark)
+                if cmd == _Grade_Cmd.APPROVE:
+                    grader.save_current(0, remark)
+                    settled = True
+                elif cmd == _Grade_Cmd.REJECT:                    
+                    grader.save_current(deduction, remark, True)
                     settled = True
                 elif cmd == _Grade_Cmd.REWIND:
                     rewinding = True
@@ -351,7 +432,10 @@ def _main():
                         if cmd == _Grade_Cmd.APPROVE:
                             rewinding = False # cancel rewinding
                         elif cmd == _Grade_Cmd.REJECT:
-                            grade.save_rewound(deduction, remark)
+                            grader.save_rewound(deduction, remark)
+                            rewinding = False # rewinding complete
+                        elif cmd == _Grade_Cmd.CANCEL:
+                            grader.save_rewound(deduction, remark, False)
                             rewinding = False # rewinding complete
                         elif cmd == _Grade_Cmd.REWIND:
                             continue # has not rewound to wanted place
@@ -377,12 +461,14 @@ def _main():
             # end of while not settled
             # finished grading the one on hand
         # end of while grader.has_next()
-        # finished grading all        
+        # finished grading all
+        grader.wrap_up() 
         _copy_to_clipboard(grader.report())
         print grader.brief()
         is_answered = False
         subm_grad_time = int(time.time() - subm_grad_time)
         print "time taken: %d sec" % subm_grad_time
+        print "detailed feedback is copied to clipboard."
         while not is_answered:
             answer = raw_input("Grade a new one ([y]/n)?")
             is_answered, grade_next = _judge_answer(answer) 
