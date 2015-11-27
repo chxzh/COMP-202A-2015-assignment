@@ -1,29 +1,29 @@
 # the yaml version for assignment 3 grading
-_fullmark: 100
-_signature: by cxz
+fullmark: 100
+signature: by cxz
 Sudoku class: # section for question 1
-    _total: 40
+    total: 40
     sort(): # subsection
-        _total: 10
+        total: 10
         deduction: # if required action is absent, points deducted
             sort a copy instead of sorting on input: 5
             handle duplicates properly: 3
             avoid off-by-one error: 1
     uniqueEntries():
-        _total: 5
+        total: 5
         deduction: 
             call the sort() instead of presuming a sorted input: 3
     getColumn():
-        _total: 3
+        total: 3
     flatten():
-        _total: 6
+        total: 6
     subGrid():
-        _total: 8
+        total: 8
         deduction: 
             catch and handle index out of bounds error: 3
             take i as row and j as column, instead of reversed: 1
     isSudoku():
-        _total: 8
+        total: 8
         deduction:
             have good assumption to avoid crash: 3
             handle non-null input: 1
@@ -34,13 +34,13 @@ Sudoku class: # section for question 1
             check the length of all arrays: 1
             combine all results properly: 2
             have a public modifier: 1
-    _overall: # where subject should be the section title
+    overall: # where subject should be the section title
         deduction:
             avoid modifying the input: 5
 cards and card games: # section for question 2, 3 and 4
     total: 60
     Card class: # sub section for question 2, likewise in the following
-        _total: 10
+        total: 10
         deduction:
             have a proper constructor and getters: 5
             have a correct toString(): 5
@@ -64,6 +64,6 @@ cards and card games: # section for question 2, 3 and 4
             initialize the pile and then deal all cards out: 5
             search for the ace of spades: 4
             print the winner: 1
-_overall:
+overall:
     deduction:
         avoid using EXTRA PUBLIC methods: 0
