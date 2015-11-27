@@ -340,7 +340,23 @@ def _judge_answer(answer):
     return is_answered, grade_next
 
 def _help():
-    print "grade.py <path of rubrics yaml file>"
+    print "to start grading: python grade.py <path of rubrics yaml file>"
+    rules = """when grading:
+input pattern: [<command>][<deduction>][<remark>]
+for affirmative answer: -a or just nothing
+for deducting points: -d <point>[<remark>]
+    for positive point, it is the given score
+    for negative point, it is the deduction
+    for zero, it means deducting all
+for rewinding previous record: -r
+    keep on rewinding: -r
+    stop rewinding and get back: -a or just nothing
+    correct on rewound record:
+        still to deduct: -d <point>[<remark>]
+        cancel that deduction: -c
+to grumble (and deduct if needed): -g[<deduction>]<remark>
+"""
+    print rules
     return
     
 def _handle_args(args):
@@ -395,6 +411,8 @@ class _Grade_Cmd:
         finally:
            if deduction == None: deduction = 0 
            if remark == None: remark = ""
+           if remark == "" and cmd == _Grade_Cmd.GRUMBLE:
+               cmd = _Grade_Cmd.UNRECOGNIZED # cannot have empty grumbles
 #         print "cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark)
         return cmd, deduction, remark
     
