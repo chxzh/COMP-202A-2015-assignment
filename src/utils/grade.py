@@ -1,6 +1,5 @@
 import clipboard as cb
 import time, sys, re
-from boto.mturk.question import AnswerSpecification
 import yaml
 try:
     from yaml import CLoader as Loader
