@@ -27,6 +27,9 @@ class _Score_point():
         self.deduction = deduction
         self.remark = remark
         if deduction > 0: self.deducted = True
+        else: # in case when deduction == 0 is a fix, 
+            # such explicit assigning is needed
+            self.deducted = False
     
     def ask(self):
         return "(%d pt) Did %s %s?" % \
