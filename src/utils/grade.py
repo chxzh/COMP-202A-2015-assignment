@@ -67,7 +67,15 @@ class _Grumble():
         return 'grumbled that "(-%d) %s"?'% (self.deduction, self.remark)
     
     def answer(self):
-        return "(-%d) %s." % (self.deduction, self.remark)
+        if self.remark != "": 
+            return "(-%d) %s." % (self.deduction, self.remark)
+        else:
+            return ""
+    
+    def deduct(self, deduction, remark):
+        # this method could be could when rewinding to fix a grumble
+        self.deduction = abs(deduction)
+        self.remark = remark
 
 
 class _Subsection():
@@ -258,8 +266,11 @@ class Grader:
         except IndexError:
             self._rewind_one = None
     
-    def save_rewound(self, deduction, remark, deducted=True):        
-        deduction = self._clamp(deduction, self._rewind_one.total)
+    def save_rewound(self, deduction, remark, cancelled=False):
+        # if the deducted == False, the deduction shall be cancelled
+        # which is set to 0-deduction       
+        if isinstance(self._rewind_one, _Score_point):
+            deduction = self._clamp(deduction, self._rewind_one.total)
         try:
             if deduction > 0:
                 # which is the granted grade
@@ -267,10 +278,21 @@ class Grader:
                                 self._rewind_one.total - deduction)
             elif deduction < 0:
                 deduction = -deduction
-            elif deduction == 0 and deducted:
+            elif deduction == 0 and not cancelled:
+                # when it is going to deduct all points out
                 deduction = self._rewind_one.total
+            elif cancelled:
+                # to ensure doesn't backfire with conflicted inputs
+                deduction = 0
             self._rewind_one.deduct(deduction, remark)
+            if isinstance(self._rewind_one, _Grumble) \
+                    and cancelled:
+                # cannot have an empty grumble
+                self.records.remove(self._rewind_one)
+                self.grumble_list.remove(self._rewind_one)
         except AttributeError as ae:
+            # if self._rewind_one is None, that is having nothing to rewind
+            # do nothing
             if self._rewind_one != None: raise ae
         finally:
             self.end_rewind()
@@ -411,16 +433,19 @@ class _Grade_Cmd:
                     cmd = _Grade_Cmd.UNRECOGNIZED
             deduction = int(deduction) if deduction != None else 0
         finally:
-           if deduction == None: deduction = 0 
-           if remark == None: remark = ""
-           if remark == "" and cmd == _Grade_Cmd.GRUMBLE:
+            if deduction == None: deduction = 0 
+            if remark == None: remark = ""
+            if remark == "" and cmd == _Grade_Cmd.GRUMBLE:
                cmd = _Grade_Cmd.UNRECOGNIZED # cannot have empty grumbles
+            if cmd == _Grade_Cmd.CANCEL: # cancel is cancel
+                deduction = 0
+                remark = ""
 #         print "cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark)
         return cmd, deduction, remark
     
 def _main():
-    path = _handle_args(sys.argv)
-#     path = "../../rubrics/assignment3/assignment3rubric.yaml"
+#     path = _handle_args(sys.argv)
+    path = "../../rubrics/assignment3/assignment3rubric.yaml"
     grader = Grader(path)
     grade_next = True
     counter = 0
@@ -455,7 +480,7 @@ def _main():
                             grader.save_rewound(deduction, remark)
                             rewinding = False # rewinding complete
                         elif cmd == _Grade_Cmd.CANCEL:
-                            grader.save_rewound(deduction, remark, False)
+                            grader.save_rewound(deduction, remark, cancelled=True)
                             rewinding = False # rewinding complete
                         elif cmd == _Grade_Cmd.REWIND:
                             continue # has not rewound to wanted place
