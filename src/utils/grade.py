@@ -444,14 +444,14 @@ class _Grade_Cmd:
         return cmd, deduction, remark
     
 def _main():
-#     path = _handle_args(sys.argv)
-    path = "../../rubrics/assignment3/assignment3rubric.yaml"
+    path = _handle_args(sys.argv)
+#     path = "../../rubrics/assignment3/assignment3rubric.yaml"
     grader = Grader(path)
     grade_next = True
     counter = 0
     start_time = time.localtime()
     while grade_next:
-        subm_grad_time = time.time()
+        subm_grad_time = time.time(); print "--------------"
         while grader.has_next:
             settled = False
             grader.grade_next()

@@ -26,7 +26,7 @@ Sudoku class: # section for question 1
         total: 8
         deduction:
             have good assumption to avoid crash: 3
-            handle non-null input: 1
+            handle null input: 1
             check the rows: 1
             check the columns: 1
             check the correct sub-grids: 2
