@@ -60,6 +60,13 @@ public class CardPile {
 		return result.toString();
 	}
 	
+	public String toStringHide1st() {
+		String unHiden = this.toString();
+		int firstComma = unHiden.indexOf(',');
+		String hidden = "A Hidden Card";
+		return (firstComma == -1)? hidden: hidden + unHiden.substring(firstComma);
+	}
+	
 	public int getNumCards(){
 		return this.cards.size();
 	}
