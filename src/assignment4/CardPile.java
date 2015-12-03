@@ -39,19 +39,12 @@ public class CardPile {
 	}
 	
 	public int find(Suit s, Value v) {
-		int counter = 0;
-		for (Card card: this.cards) {
-			if(card.getSuit() == s && card.getValue() == v) {
-				return counter;
-			}
-			counter ++;
-		}
-		return -1;
+		return this.cards.indexOf(new Card(s,v));
 	}
 	
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		int index = 0;
+		int index = 1;
 		for (Card card: this.cards) {
 			result.append(", "+ index +". "+card);
 			index ++;
