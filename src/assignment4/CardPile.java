@@ -5,14 +5,13 @@ import java.util.Collections;
 
 import assignment3.Card;
 import assignment3.Suit;
-import assignment3.UtilityCode;
 import assignment3.Value;
 
 public class CardPile {
 	private ArrayList<Card> cards;
 	
 	public CardPile() {
-		this.cards = new ArrayList<Card>(52);
+		this.cards = new ArrayList<Card>();
 	}
 	
 	public void addToBottom(Card card) {
