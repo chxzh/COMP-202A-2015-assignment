@@ -7,56 +7,58 @@ import assignment3.Card;
 import assignment3.Value;
 
 public class Blackjack {
-	public enum Results {DEALER_WINS, PLAYER_WINS, TIE, BLACKJACK};
+	public enum Results {
+		DEALER_WINS, PLAYER_WINS, TIE, BLACKJACK
+	};
 	private static HashMap<Value, Integer> scoreMap;
-	private static int chipPile = 0;
-	private static CardPile player, dealer, deck;
-	private static boolean leave = false;
-	private static int chipBet = 0;
-	
+	private static Scanner sc;
+
 	private static void initialize() {
 		initializeScoreMap();
-		player = new CardPile();
-		dealer = new CardPile();
-		deck = CardPile.makeFullDeck(3);
+		sc = new Scanner(System.in);
 	}
-	
+
 	public static void main(String args[]) throws Exception {
 		initialize();
-		chipPile = 10;//Integer.parseInt(args[0]);
-		while (chipPile > 0 && !leave && deck.getNumCards() > 10) {
-			System.out.println("Now you have $"+chipPile);
-			Results result = playRound(deck);
-			displayInfo(false);
-			float factor = 0;
-			switch(result){
-				case DEALER_WINS:
-					factor = -1;
-					break;
-				case PLAYER_WINS:
-					factor = 1;
-					break;
-				case TIE:
-					factor = 0;
-					break;
-				case BLACKJACK:
-					factor = 1.5f;
-					break;
-				default:
-					throw new Exception("Unexpected round result: "+ result.toString());
+		int chipPile = Integer.parseInt(args[0]);
+		CardPile deck = CardPile.makeFullDeck(3);
+		while (chipPile > 0 && deck.getNumCards() > 10) {
+			System.out.println("Now you have $" + chipPile);
+			System.out.print("How much to Bet? $");
+			int chipBet = sc.nextInt();
+			while (chipBet > chipPile) {
+				System.out.println("We don't provide loan services.");
+				System.out.print("How much to Bet? $");
+				chipBet = sc.nextInt();
 			}
-			chipPile += (int)(factor*chipBet);
-			resetHands();
+			if (chipBet <= 0) {
+				// leaving the game
+				break;
+			}
+			Results result = playRound(deck);
+			float factor = 0;
+			switch (result) {
+			case DEALER_WINS:
+				factor = -1;
+				break;
+			case PLAYER_WINS:
+				factor = 1;
+				break;
+			case TIE:
+				factor = 0;
+				break;
+			case BLACKJACK:
+				factor = 1.5f;
+				break;
+			default:
+				throw new Exception("Unexpected round result: " + result.toString());
+			}
+			chipPile += (int) (factor * chipBet);
 		}
-		summerize();
+		summerize(chipPile);
 	}
-	
-	private static void resetHands() {
-		player = new CardPile();
-		dealer = new CardPile();
-	}
-	
-	private static void summerize() {
+
+	private static void summerize(int chipPile) {
 		System.out.println("At the end of the Game, you have $" + chipPile);
 	}
 
@@ -94,7 +96,8 @@ public class Blackjack {
 		}
 		if (score > scoreBar && aceNum > 0) {
 			for (int i = 1; i <= aceNum; i++) {
-				// Score of having i Ace count as 1, which means 10 lease
+				// Score of having each Ace counts as 1, which means 10 least
+				// potentially
 				int alterScore = score - 10 * i;
 				// by going further score is reducing, further from 21
 				if (alterScore <= scoreBar) {
@@ -106,21 +109,16 @@ public class Blackjack {
 		return score;
 	}
 
-	public static Results playRound(CardPile cardPile) {
-		Scanner sc = new Scanner(System.in);
-		System.out.print("How much to Bet? $");
-		chipBet = sc.nextInt();
-		if(chipBet <= 0) {
-			leave = true;
-			return Results.TIE;
-		}
+	public static Results playRound(CardPile deck) {
+		CardPile player = new CardPile();
+		CardPile dealer = new CardPile();
 		// dealing initial two cards
-		for(int i = 0; i < 2; i ++) {
-			player.addToBottom(cardPile.remove(0));
-			dealer.addToBottom(cardPile.remove(0));
+		for (int i = 0; i < 2; i++) {
+			player.addToBottom(deck.remove(0));
+			dealer.addToBottom(deck.remove(0));
 		}
-		displayInfo(true);
 		boolean playerStays = false, dealerStays = false;
+		Results result = Results.TIE;
 		// running out of cards is possible, which calls a tie
 		while (!deck.isEmpty()) {
 			int playerValue = countValue(player);
@@ -128,88 +126,94 @@ public class Blackjack {
 			if (playerValue > 21) {
 				// player busts
 				System.out.println("You bust!");
-				return Results.DEALER_WINS;
+				result = Results.DEALER_WINS;
+				break;
 			} else if (dealerValue > 21) {
 				// dealer busts and player doesn't
 				System.out.println("The dealer busts!");
-				return Results.PLAYER_WINS;
+				result = Results.PLAYER_WINS;
+				break;
 			} else if (isBlackJack(player)) {
 				if (isBlackJack(dealer)) {
 					// both black jack
 					System.out.println("Both got black jack!");
-					return Results.TIE;
+					result = Results.TIE;
+					break;
 				} else {
 					// player black jack
 					System.out.println("You got black jack!");
-					return Results.PLAYER_WINS;
+					result = Results.PLAYER_WINS;
+					break;
 				}
 			} else if (playerStays && dealerStays) {
 				// no one busts
 				if (playerValue < dealerValue) {// <= 21
 					// dealer closer
 					System.out.println("Dealer is closer!");
-					return Results.DEALER_WINS;
-				}
-				else if (playerValue == dealerValue) {
+					result = Results.DEALER_WINS;
+					break;
+				} else if (playerValue == dealerValue) {
 					// equal
 					System.out.println("Both have the same score!");
-					return Results.TIE;
-				}
-				else {
+					result = Results.TIE;
+					break;
+				} else {
 					System.out.println("You are closer!");
-					return Results.PLAYER_WINS;
+					result = Results.PLAYER_WINS;
+					break;
 				}
-
 			}
 			boolean hit;
+			displayInfo(player, dealer, true);
 			while (true) {
 				System.out.print("\"hit\" or \"stay\"? ");
 				String decision = sc.next();
-				if(decision.equals("hit")){
+				if (decision.equals("hit")) {
 					hit = true;
-				} else if(decision.equals("stay")) {
+					break;
+				} else if (decision.equals("stay")) {
 					hit = false;
-				}
-				else continue;
-				break;				
+					break;
+				} else
+					continue;
 			}
-			if(hit) {
+			if (hit) {
 				System.out.println("You hit!");
-				player.addToBottom(cardPile.remove(0));
-			}
-			else{
+				player.addToBottom(deck.remove(0));
+				playerStays = false;
+			} else {
 				System.out.println("You stay.");
 				playerStays = true;
 			}
-			if(countValue(dealer) < 18) {
+			if (countValue(dealer) < 18) {
 				// dealer hits
 				System.out.println("The dealer hits!");
-				dealer.addToBottom(cardPile.remove(0));
-			}
-			else{
+				dealer.addToBottom(deck.remove(0));
+				dealerStays = false;
+			} else {
 				System.out.println("The dealer stays.");
 				dealerStays = true;
 			}
-			displayInfo(true);
 		}
-		return Results.TIE;
+		displayInfo(player, dealer, false);
+		return result;
 	}
-	
+
 	private static boolean isBlackJack(CardPile cardPile) {
 		return cardPile.getNumCards() == 2 && countValue(cardPile) == 21;
 	}
-	
-	private static void displayInfo(boolean hideDealer){
+
+	private static void displayInfo(CardPile player, CardPile dealer, boolean hideDealer) {
 		System.out.println("You have:");
 		System.out.println(player);
-		System.out.println(countValue(player)+" points in total");
+		System.out.println(countValue(player) + " points in total");
 		System.out.println("Dealer has:");
-		if(hideDealer)
+		if (hideDealer)
 			System.out.println(dealer.toStringHide1st());
 		else {
 			System.out.println(dealer);
-			System.out.println(countValue(dealer)+" points in total");
+			System.out.println(countValue(dealer) + " points in total");
 		}
 	}
-	
+
 }
