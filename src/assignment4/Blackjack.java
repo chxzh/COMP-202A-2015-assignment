@@ -10,6 +10,7 @@ public class Blackjack {
 	public enum Results {
 		DEALER_WINS, PLAYER_WINS, TIE, BLACKJACK
 	};
+
 	private static HashMap<Value, Integer> scoreMap;
 	private static Scanner sc;
 
@@ -20,7 +21,7 @@ public class Blackjack {
 
 	public static void main(String args[]) throws Exception {
 		initialize();
-		int chipPile = Integer.parseInt(args[0]);
+		int chipPile = 100;//Integer.parseInt(args[0]);
 		CardPile deck = CardPile.makeFullDeck(3);
 		while (chipPile > 0 && deck.getNumCards() > 10) {
 			System.out.println("Now you have $" + chipPile);
@@ -35,7 +36,14 @@ public class Blackjack {
 				// leaving the game
 				break;
 			}
-			Results result = playRound(deck);
+			Results result;
+			try {
+				result = playRound(deck);
+			} catch (IndexOutOfBoundsException iobe) {
+				// out of cards in the middle of a game
+				System.out.println("Sorry we ran out of cards. Let's call a tie.");
+				result = Results.TIE;
+			}
 			float factor = 0;
 			switch (result) {
 			case DEALER_WINS:
@@ -109,7 +117,8 @@ public class Blackjack {
 		return score;
 	}
 
-	public static Results playRound(CardPile deck) {
+	public static Results playRound(CardPile deck) throws IndexOutOfBoundsException{
+		// the run out of card exception will be handled outside
 		CardPile player = new CardPile();
 		CardPile dealer = new CardPile();
 		// dealing initial two cards
@@ -117,86 +126,80 @@ public class Blackjack {
 			player.addToBottom(deck.remove(0));
 			dealer.addToBottom(deck.remove(0));
 		}
-		boolean playerStays = false, dealerStays = false;
-		Results result = Results.TIE;
-		// running out of cards is possible, which calls a tie
-		while (!deck.isEmpty()) {
-			int playerValue = countValue(player);
-			int dealerValue = countValue(dealer);
-			if (playerValue > 21) {
-				// player busts
-				System.out.println("You bust!");
-				result = Results.DEALER_WINS;
-				break;
-			} else if (dealerValue > 21) {
-				// dealer busts and player doesn't
+		displayInfo(player, dealer, true);
+		if (isBlackJack(player)) {// with only 2 cards currently
+			if (isBlackJack(dealer)) {
+				System.out.println("Both got black jack!");
+				displayInfo(player, dealer, false);
+				return Results.TIE;
+			} else {
+				System.out.println("You got black jack!");
+				displayInfo(player, dealer, false);
+				return Results.PLAYER_WINS;
+			}
+		} else {
+			boolean playerHits = true;
+			while(playerHits) {
+				while (true) { // until player enters the recognizable choice
+					System.out.print("\"hit\" or \"stay\"? ");
+					String decision = sc.next();
+					if ("hit".equals(decision.toLowerCase())) {
+						playerHits = true;
+						break;
+					} else if (decision.equals("stay")) {
+						playerHits = false;
+						break;
+					} else
+						continue;
+				} // end of while(true) the input reading loop
+				if (playerHits) {
+					System.out.println("You hit!");
+					player.addToBottom(deck.remove(0));
+					if (countValue(player) > 21) {
+						// player busts
+						displayInfo(player, dealer, false);
+						System.out.println("You bust!");
+						return Results.DEALER_WINS;
+					} else {
+						displayInfo(player, dealer, true);
+					}
+				} else { // not hitting
+					System.out.println("You stay.");
+					break;
+				} // end of if(playerHits)
+			} // end of while(playerHits)
+			// by now player stays and it is dealer's turn
+			while(countValue(dealer) < 18) {
+				// dealer Hits
+				displayInfo(player, dealer, true);
+				System.out.println("The dealer hits");
+				dealer.addToBottom(deck.remove(0));				
+			} // end of while(dealer hits)
+			// by now dealer is over 18, possibly busted already
+			if(countValue(dealer) > 21) {
+				// the dealer bursts while the player didn't
+				displayInfo(player, dealer, false);
 				System.out.println("The dealer busts!");
-				result = Results.PLAYER_WINS;
-				break;
-			} else if (isBlackJack(player)) {
-				if (isBlackJack(dealer)) {
-					// both black jack
-					System.out.println("Both got black jack!");
-					result = Results.TIE;
-					break;
-				} else {
-					// player black jack
-					System.out.println("You got black jack!");
-					result = Results.PLAYER_WINS;
-					break;
-				}
-			} else if (playerStays && dealerStays) {
-				// no one busts
+				return Results.PLAYER_WINS;
+			} else {
+				// neither of them burst
+				int playerValue = countValue(player);
+				int dealerValue = countValue(dealer);
+				displayInfo(player, dealer, false);
 				if (playerValue < dealerValue) {// <= 21
 					// dealer closer
 					System.out.println("Dealer is closer!");
-					result = Results.DEALER_WINS;
-					break;
+					return Results.DEALER_WINS;
 				} else if (playerValue == dealerValue) {
 					// equal
 					System.out.println("Both have the same score!");
-					result = Results.TIE;
-					break;
+					return Results.TIE;
 				} else {
 					System.out.println("You are closer!");
-					result = Results.PLAYER_WINS;
-					break;
+					return Results.PLAYER_WINS;
 				}
 			}
-			boolean hit;
-			displayInfo(player, dealer, true);
-			while (true) {
-				System.out.print("\"hit\" or \"stay\"? ");
-				String decision = sc.next();
-				if (decision.equals("hit")) {
-					hit = true;
-					break;
-				} else if (decision.equals("stay")) {
-					hit = false;
-					break;
-				} else
-					continue;
-			}
-			if (hit) {
-				System.out.println("You hit!");
-				player.addToBottom(deck.remove(0));
-				playerStays = false;
-			} else {
-				System.out.println("You stay.");
-				playerStays = true;
-			}
-			if (countValue(dealer) < 18) {
-				// dealer hits
-				System.out.println("The dealer hits!");
-				dealer.addToBottom(deck.remove(0));
-				dealerStays = false;
-			} else {
-				System.out.println("The dealer stays.");
-				dealerStays = true;
-			}
-		}
-		displayInfo(player, dealer, false);
-		return result;
+		} // end of else
 	}
 
 	private static boolean isBlackJack(CardPile cardPile) {
