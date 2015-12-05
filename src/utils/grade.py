@@ -69,7 +69,7 @@ class _Grumble():
     def answer(self):
         if self.remark != "": 
             return "(-%d) %s." % (self.deduction, self.remark)
-        else:
+        else: # wouldn't supposed to have, silent grumble?
             return ""
     
     def deduct(self, deduction, remark):
