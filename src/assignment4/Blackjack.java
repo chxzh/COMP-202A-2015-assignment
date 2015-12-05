@@ -21,7 +21,7 @@ public class Blackjack {
 
 	public static void main(String args[]) throws Exception {
 		initialize();
-		int chipPile = 100;//Integer.parseInt(args[0]);
+		int chipPile = Integer.parseInt(args[0]);
 		CardPile deck = CardPile.makeFullDeck(1);
 		while (chipPile > 0 && deck.getNumCards() > 10) {
 			System.out.println("Now you have $" + chipPile);
