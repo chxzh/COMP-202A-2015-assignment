@@ -52,6 +52,7 @@ public class SentenceChecker {
 		words[i] = scanner.nextLine().toLowerCase();
 		i++;
 	    }
+	    scanner.close();
 	    return words;
 	}
 	catch (FileNotFoundException e) {

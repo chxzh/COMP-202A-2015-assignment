@@ -11,7 +11,7 @@ public class Grader {
 	private static int grade = FULLMARK;
 	private static final String signature = "by cxz";
 	private static StringBuffer remark;
-	private static Scanner sc;
+//	private static Scanner sc;
 	
 	@BeforeClass
 	public static void prepare() {
@@ -39,13 +39,13 @@ public class Grader {
 		return;
 	}
 	
-	private static void discountWithRemark(double discount, String remark) {
-		Grader.grade = (int)(Grader.grade*(1-discount)) + 1;
-		Grader.remark.append("- ");
-		Grader.remark.append(remark);
-		Grader.remark.append(" (-"+(int)(discount*100)+")");
-		Grader.remark.append("\n");
-	}
+//	private static void discountWithRemark(double discount, String remark) {
+//		Grader.grade = (int)(Grader.grade*(1-discount)) + 1;
+//		Grader.remark.append("- ");
+//		Grader.remark.append(remark);
+//		Grader.remark.append(" (-"+(int)(discount*100)+")");
+//		Grader.remark.append("\n");
+//	}
 	
 	private static void deductWithRemark(int deduction, String remark) {
 		Grader.grade -= deduction;
@@ -56,10 +56,10 @@ public class Grader {
 		
 	}
 
-	private void manualCheck(String functionName, String action, int deduction) {
-		System.out.println("Did "+functionName+" "+action+"?");
-		if(!sc.nextLine().equals("")) {
-			Grader.deductWithRemark(deduction, functionName+" didn't "+action);
-		}
-	}
+//	private void manualCheck(String functionName, String action, int deduction) {
+//		System.out.println("Did "+functionName+" "+action+"?");
+//		if(!sc.nextLine().equals("")) {
+//			Grader.deductWithRemark(deduction, functionName+" didn't "+action);
+//		}
+//	}
 }

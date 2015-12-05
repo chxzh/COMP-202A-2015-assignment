@@ -5,7 +5,6 @@ import java.util.Scanner;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert;
 
 public class Grader {
 	private static int grade = 100;
@@ -34,14 +33,14 @@ public class Grader {
 		System.out.println(Grader.remark);
 		System.out.println(Grader.signature);
 	}
-	
-	private static void discountWithRemark(double discount, String remark) {
-		Grader.grade = (int)(Grader.grade*(1-discount)) + 1;
-		Grader.remark.append("- ");
-		Grader.remark.append(remark);
-		Grader.remark.append(" (-"+(int)(discount*100)+")");
-		Grader.remark.append("\n");
-	}
+//	
+//	private static void discountWithRemark(double discount, String remark) {
+//		Grader.grade = (int)(Grader.grade*(1-discount)) + 1;
+//		Grader.remark.append("- ");
+//		Grader.remark.append(remark);
+//		Grader.remark.append(" (-"+(int)(discount*100)+")");
+//		Grader.remark.append("\n");
+//	}
 	
 	private static void deductWithRemark(int deduction, String remark) {
 		Grader.grade -= deduction;
