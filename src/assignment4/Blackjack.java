@@ -22,7 +22,7 @@ public class Blackjack {
 	public static void main(String args[]) throws Exception {
 		initialize();
 		int chipPile = 100;//Integer.parseInt(args[0]);
-		CardPile deck = CardPile.makeFullDeck(3);
+		CardPile deck = CardPile.makeFullDeck(1);
 		while (chipPile > 0 && deck.getNumCards() > 10) {
 			System.out.println("Now you have $" + chipPile);
 			System.out.print("How much to Bet? $");
@@ -103,16 +103,33 @@ public class Blackjack {
 			score += getScore(card);
 		}
 		if (score > scoreBar && aceNum > 0) {
+			/*
+			 * if any ace is in hand, here is to get the alternative score that
+			 * is closest to 21. As ace was initially counted as 11, the options
+			 * will be taking some number of ace and count them as 1, which
+			 * means 10-multiplying-the-number lease. To find the closest one,
+			 * we iterate from the largest to the smallest by -10 for each time
+			 * counting one more ace, and first one not bigger than 21 (and
+			 * biggest "<= 21") will be accepted. In case it doesn't have any
+			 * alternative under 21, we take the smallest alternative, which is
+			 * the smallest ">= 21". Either of them could be the closest but the
+			 * below-21 got priority for possibility to win.			 * 
+			 */
+			
+			int alterScore = score;
 			for (int i = 1; i <= aceNum; i++) {
 				// Score of having each Ace counts as 1, which means 10 least
 				// potentially
-				int alterScore = score - 10 * i;
+				alterScore -= 10;
 				// by going further score is reducing, further from 21
 				if (alterScore <= scoreBar) {
 					// therefore, the first off-bar alternative is optimal
-					return alterScore;
+					break;
 				}
 			}
+			// at this point, the alterScore is either the smallest
+			// bigger-than-21 or the biggest smaller-than-21
+			score = alterScore;
 		}
 		return score;
 	}
