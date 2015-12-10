@@ -39,7 +39,14 @@ public class CardPile {
 	}
 	
 	public int find(Suit s, Value v) {
-		return this.cards.indexOf(new Card(s,v));
+		int counter = 0;
+		for (Card card: this.cards) {
+			if(card.getSuit() == s && card.getValue() == v) {
+				return counter;
+			}
+			counter ++;
+		}
+		return -1;
 	}
 	
 	public String toString() {
@@ -78,5 +85,10 @@ public class CardPile {
 	
 	public static CardPile makeFullDeck() {
 		return makeFullDeck(1);
+	}
+	public static void main(String[] args){
+		Card c1 = new Card(Suit.SPADES, Value.ACE);
+		Card c2 = new Card(Suit.SPADES, Value.ACE);
+		System.out.println(c1.equals(c2));
 	}
 }
