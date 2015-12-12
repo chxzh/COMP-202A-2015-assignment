@@ -19,6 +19,7 @@ class AbsolutePositioningExample(QWidget):
         # ourselves, since we control the entire layout
         self.setMinimumSize(400, 185)
         self.setMaximumWidth(600)
+        self._margin_size = 5
         
         self.setWindowTitle('Grader 202')
         # getting resolution of primary monitor
@@ -29,7 +30,16 @@ class AbsolutePositioningExample(QWidget):
         # Create the controls with this object as their parent and set
         # their position individually; each row is a label followed by
         # another control
- 
+        self.question_header = QLabel("Score Point",self)
+#         self.question_header.resize(self.get_widget_full_width(), 5)
+        self.question_header.move(self._margin_size, self._margin_size)
+        
+        self.question_field = QTextEdit("Where there will be a score point hint", self)
+        self.question_field.resize(self.get_widget_full_width(), 200)
+        self.question_field.move(self._margin_size, self._margin_size + self.question_header.height())
+        self.question_field.setReadOnly(True)
+        return
+    
         # Label for the salutation chooser
         self.salutation_lbl = QLabel('Salutation:', self)
         self.salutation_lbl.move(5, 5) # offset the first control 5px
@@ -85,7 +95,10 @@ class AbsolutePositioningExample(QWidget):
         # the other interactive widgets
         self.build_button.setMinimumWidth(145)
         self.build_button.move(250, 150)
- 
+        
+    def get_widget_full_width(self):
+        return self.width() - 2*self._margin_size
+    
     def run(self):
         # Show the form
         self.show()
