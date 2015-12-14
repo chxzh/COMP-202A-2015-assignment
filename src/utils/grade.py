@@ -317,11 +317,10 @@ class Grader:
     
     def ask_rewound(self):
         try:
-            return "%s\nYou put: \"%s\"" %\
-                    (self._rewind_one.ask(), self._rewind_one.brief_answer())
+            return self._rewind_one.ask(), "You put: \"%s\"" %self._rewind_one.brief_answer()
         except AttributeError as ae:
             if self._rewind_one != None: raise ae
-            else: return "There is no more to rewind."
+            else: return "There is no more to rewind.",""
     
     def wrap_up(self):
         self.remark = ""
@@ -440,7 +439,7 @@ class _Grade_Cmd:
             if cmd == _Grade_Cmd.CANCEL: # cancel is cancel
                 deduction = 0
                 remark = ""
-        feedback_input("cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark))
+#         feedback_input("cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark))
         return cmd, deduction, remark
 
 import colorama
@@ -474,7 +473,8 @@ def _main():
             settled = False
             grader.grade_next()
             while not settled:
-                in_str = raw_input(grader.ask()+'\n')
+                ask_new(grader.ask())
+                in_str = raw_input()
                 cmd, deduction, remark = _Grade_Cmd.parce_cmd(in_str)
                 if cmd == _Grade_Cmd.APPROVE:
                     grader.save_current(0, remark)
@@ -490,7 +490,10 @@ def _main():
                             grader.rewind()
                         else:
                             just_grumbled = False # reset the grumble state
-                        in_str = raw_input(grader.ask_rewound()+'\n')
+                        qst, ans = grader.ask_rewound()
+                        ask_old(qst)
+                        if ans: feedback_record(ans)
+                        in_str = raw_input()
                         cmd, deduction, remark = _Grade_Cmd.parce_cmd(in_str)
                         if cmd == _Grade_Cmd.APPROVE:
                             rewinding = False # cancel rewinding
@@ -506,7 +509,7 @@ def _main():
                             grader.save_grumble(deduction, remark)
                             just_grumbled = True
                         else: # unrecognized cmd
-                            print "what? try again?"
+                            warn("what? try again?")
                             # take as a meaningless one
                             # so don't save
                             just_grumbled = True                            
@@ -518,7 +521,7 @@ def _main():
                     grader.save_grumble(deduction, remark)
                     # finish grumbling and keep on grading
                 else:
-                    print "what did you say? try again?"
+                    warn("what did you say? try again?")
                     # take as a meaningless one
                     # so don't save
             # end of while not settled
@@ -527,18 +530,19 @@ def _main():
         # finished grading all
         grader.wrap_up() 
         _copy_to_clipboard(grader.report())
-        print grader.brief()
+        brief(grader.brief())
         is_answered = False
         subm_grad_time = int(time.time() - subm_grad_time)
-        print "time taken: %d sec" % subm_grad_time
-        print "detailed feedback is copied to clipboard."
+        brief("time taken: %d sec" % subm_grad_time)
+        brief("detailed feedback is copied to clipboard.")
         while not is_answered:
-            answer = raw_input("Grade a new one ([y]/n)?")
+            ask_new("Grade a new one ([y]/n)?")
+            answer = raw_input()
             is_answered, grade_next = _judge_answer(answer) 
         grader.reset()
         counter += 1
-    print "Have graded %d assignment(s)" % counter
-    print "Started from %s" % time.strftime("%H:%M:%S", start_time)
+    wrap_up("Have graded %d assignment(s)" % counter)
+    wrap_up("Started from %s" % time.strftime("%H:%M:%S", start_time))
     return
 
 if __name__ == "__main__":
