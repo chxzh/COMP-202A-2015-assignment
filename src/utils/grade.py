@@ -453,6 +453,7 @@ def style_print(fore, back, style):
 
 ask_new = style_print(Fore.WHITE, Back.RESET, Style.BRIGHT)
 ask_old = style_print(Fore.CYAN, Back.RESET, Style.BRIGHT)
+ask_sys = style_print(Fore.GREEN, Back.RESET, Style.BRIGHT)
 feedback_input = style_print(Fore.GREEN, Back.RESET, Style.NORMAL)
 feedback_record = style_print(Fore.CYAN, Back.RESET, Style.NORMAL)
 brief = style_print(Fore.MAGENTA, Back.RESET, Style.NORMAL)
@@ -536,7 +537,7 @@ def _main():
         brief("time taken: %d sec" % subm_grad_time)
         brief("detailed feedback is copied to clipboard.")
         while not is_answered:
-            ask_new("Grade a new one ([y]/n)?")
+            ask_sys("Grade a new one ([y]/n)?")
             answer = raw_input()
             is_answered, grade_next = _judge_answer(answer) 
         grader.reset()
