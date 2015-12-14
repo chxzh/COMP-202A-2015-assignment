@@ -4,44 +4,44 @@ signature: by cxz
 Updating CardPile class: # section for question 1 and 2
     total: 40
     CardPile:
-		total: 30
-		deduction:
-			replace all operations to Cards properly: 25
-			avoid using indexOf() in find() without implementing equals in Card class: 5
+        total: 30
+        deduction:
+            replace all operations to Cards properly: 25
+            avoid using indexOf() in find() without implementing equals in Card class: 5
     makeFullDeck(n):
         total: 8
     getNumCards():
-		total: 2
-Black Jack Game： # section for question 3
-	total: 60
-	countValues():
-		total: 15
-		deduction:
-			calculate correct score for non-ace cases: 5
-			adjust for aces to have the best score: 10
-	getScore():
-		total: 5
-	playRound():
-		total: 30
-		deduction:
-			deal cards to both players: 5
-			hide one of dealer's cards when player chooses: 5
-			display all cards at the end: 5
-			let the player first then the dealer have a turn to choose: 5
-			make dealer choose automatically: 5
-			let player with blackjack win automatically: 5
-	main():
-		total: 10
-		deduction:
-			loop to check if the deck size is under 10 and end when it is: 10
+        total: 2
+Black Jack Game: # section for question 3
+    total: 60
+    countValues():
+        total: 15
+        deduction:
+            calculate correct score for non-ace cases: 5
+            adjust for aces to have the best score: 10
+    getScore():
+        total: 5
+    playRound():
+        total: 30
+        deduction:
+            deal cards to both players: 5
+            hide one of dealer's cards when player chooses: 5
+            display all cards at the end: 5
+            let the player first then the dealer have a turn to choose: 5
+            make dealer choose automatically: 5
+            let player with blackjack win automatically: 5
+    main():
+        total: 10
+        deduction:
+            loop to check if the deck size is under 10 and end when it is: 10
 Black Jack bounus:
-	total: 10
-	playRound():
-		total: 3
-		deduction:
-			return the new enum types as results: 3
-	main():
-		total: 7
-		deduction:
-			parse args[0] for initial piles: 3
-			adjust money properly according to result of each round: 4
+    total: 10
+    playRound():
+        total: 3
+        deduction:
+            return the new enum types as results: 3
+    main():
+        total: 7
+        deduction:
+            parse args[0] for initial piles: 3
+            adjust money properly according to result of each round: 4
