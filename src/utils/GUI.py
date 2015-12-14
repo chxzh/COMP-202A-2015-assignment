@@ -35,9 +35,13 @@ class AbsolutePositioningExample(QWidget):
         self.question_header.move(self._margin_size, self._margin_size)
         
         self.question_field = QTextEdit("Where there will be a score point hint", self)
-        self.question_field.resize(self.get_widget_full_width(), 200)
+        self.question_field.resize(self.get_widget_full_width(), 50)
         self.question_field.move(self._margin_size, self._margin_size + self.question_header.height())
         self.question_field.setReadOnly(True)
+        
+        self.score_field = QLineEdit(self)
+        self.score_field.move(self._margin_size, 100)
+        self.score_field.setValidator(QIntValidator(-10, 10, self.score_field))
         return
     
         # Label for the salutation chooser

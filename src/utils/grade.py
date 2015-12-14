@@ -1,6 +1,7 @@
 import clipboard as cb
 import time, sys, re
 import yaml
+from win32con import OUT_CHARACTER_PRECIS
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -440,9 +441,27 @@ class _Grade_Cmd:
             if cmd == _Grade_Cmd.CANCEL: # cancel is cancel
                 deduction = 0
                 remark = ""
-#         print "cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark)
+        feedback_input("cmd:%d, ded:%d, remark:%s" %(cmd, deduction, remark))
         return cmd, deduction, remark
-    
+
+import colorama
+colorama.init()
+from colorama import Fore, Back, Style
+def style_print(fore, back, style):
+    def new_print(*objects):
+        print fore+back+style+" ".join(objects)+ Fore.RESET + Back.RESET + Style.RESET_ALL
+        return
+    return new_print
+
+ask_new = style_print(Fore.WHITE, Back.RESET, Style.BRIGHT)
+ask_old = style_print(Fore.CYAN, Back.RESET, Style.BRIGHT)
+feedback_input = style_print(Fore.GREEN, Back.RESET, Style.RESET_ALL)
+feedback_record = style_print(Fore.CYAN, Back.RESET, Style.RESET_ALL)
+brief = style_print(Fore.MAGENTA, Back.RESET, Style.RESET_ALL)
+wrap_up = style_print(Fore.MAGENTA, Back.RESET, Style.BRIGHT)
+warn = style_print(Fore.YELLOW, Back.RESET, Style.BRIGHT)
+error = style_print(Fore.RED, Back.RESET, Style.BRIGHT)
+
 def _main():
     path = _handle_args(sys.argv)
 #     path = "../../rubrics/assignment3/assignment3rubric.yaml"
