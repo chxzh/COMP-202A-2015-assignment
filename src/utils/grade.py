@@ -178,9 +178,8 @@ class Grader:
         try:
             # load compulsory components
             self.fullmark = rubric_dic.pop("fullmark")
-            self.overall = rubric_dic.pop("overall")
         except KeyError as err:
-            raise Exception("cannot have root component %s in rubric file %d" % 
+            raise Exception("cannot have root component %s in rubric file %s" % 
                             (err.args[0], rubric_path))
         # load optional components
         self.signature = self._load_optional(rubric_dic, 'signature', '')        
@@ -455,9 +454,9 @@ def style_print(fore, back, style):
 
 ask_new = style_print(Fore.WHITE, Back.RESET, Style.BRIGHT)
 ask_old = style_print(Fore.CYAN, Back.RESET, Style.BRIGHT)
-feedback_input = style_print(Fore.GREEN, Back.RESET, Style.RESET_ALL)
-feedback_record = style_print(Fore.CYAN, Back.RESET, Style.RESET_ALL)
-brief = style_print(Fore.MAGENTA, Back.RESET, Style.RESET_ALL)
+feedback_input = style_print(Fore.GREEN, Back.RESET, Style.NORMAL)
+feedback_record = style_print(Fore.CYAN, Back.RESET, Style.NORMAL)
+brief = style_print(Fore.MAGENTA, Back.RESET, Style.NORMAL)
 wrap_up = style_print(Fore.MAGENTA, Back.RESET, Style.BRIGHT)
 warn = style_print(Fore.YELLOW, Back.RESET, Style.BRIGHT)
 error = style_print(Fore.RED, Back.RESET, Style.BRIGHT)
