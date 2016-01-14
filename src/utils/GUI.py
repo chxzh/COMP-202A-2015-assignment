@@ -1,5 +1,4 @@
 import sys
-import ctypes
     
  
 from PySide.QtGui import *
@@ -19,18 +18,16 @@ class AbsolutePositioningExample(QWidget):
         # ourselves, since we control the entire layout
         self.setMinimumSize(400, 185)
         self.setMaximumWidth(600)
+        self.resize(480, 600)
         
         self.setWindowTitle('Grader 202')
-        # getting resolution of primary monitor
-        sc_width, sc_heigth = ctypes.windll.user32.GetSystemMetrics(0),\
-                ctypes.windll.user32.GetSystemMetrics(1)
  
-        self.resize(480, 600)
         # Create the controls with this object as their parent and set
         # their position individually; each row is a label followed by
         # another control
  
         # Label for the salutation chooser
+        self.question
         self.salutation_lbl = QLabel('Salutation:', self)
         self.salutation_lbl.move(5, 5) # offset the first control 5px
                                        # from top and left
