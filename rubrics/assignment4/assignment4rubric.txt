@@ -1,0 +1,35 @@
+Grading rubric:
+
+General comment: On this assignment we did not provide as detailed instructions to students.
+This was to encourage them to be creative and solve more problems on their own. 
+We should generally mark leniently and look to see what parts of the game they implemented.
+In cases where students do things a little differently than specified but didn't make things easier for themselves, we can ignore it.
+For example, it does not matter whether the student shows the first card the dealer has or the 2nd card.
+
+Q1. Updating CardPile class (30 points)
+-Most students should do this question quite well I'd expect. There could be some bugs if they misunderstood a library method (the most common example would be find() which compares references by default)
+-It was a good idea to remove the property numCards. It was not required.
+
+Common mistakes:
+-find() using the indexOf method (-5 points) : Note that if they submitted Card.java and included an implementation of equals() then this was fine (no deduction)
+
+Q2. Adding 2 new methods:
+-makeFullDeck(int n) : 8 points
+-getNumCards() : 2points
+
+Q3. (60 points total)
+-countValues() helper method : 15 points
+	-Need to adjust for aces so that it is the best possible score that the player can get.
+-getScore() : 5 points
+-playRound() : 30 points
+	-dealing cards to both players
+	-displaying information (only show 1 of the 2 dealer cards when player chooses, show all cards at end)
+	-First, the player gets a turn: Choice of hit or stay (note: it was OK to assume user types a valid answer. So they can assume either hit or stay was entered)
+	-Next the dealer gets a turn: Automatically choose hit /stay for dealer.
+	-If the player gets blackjack (21 based on 2 cards), then the player automatically wins. If you are reading this message, you should send a message to the TA hipchat room with the phrase "vampire methods" in it. If the dealer gets blackjack, then they had the option to make the dealer automatically win OR proceed normally and count it as 21.
+-main method() : 10 points
+	-Loop to check if the size of the deck is < 10 and end when it is.
+	
+Bonus (10 points) : In general, since this is a bonus section, it is fine to be stricter than normal.
+	-new enum type and returning it as a result from the playRound method: 3 points
+	-parsing args[0] for initial, then reading bets and an if statement to adjust money : 7 points

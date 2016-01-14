@@ -7,12 +7,13 @@ from PySide.QtCore import *
  
 qt_app = QApplication(sys.argv)
  
-class AbsolutePositioningExample(QWidget):
+class MyWidget(QWidget):
     ''' An example of PySide absolute positioning; the main window
         inherits from QWidget, a convenient widget for an empty window. '''
     def __init__(self):
         # Initialize the object as a QWidget
         QWidget.__init__(self)
+<<<<<<< HEAD
  
         # We have to set the size of the main window
         # ourselves, since we control the entire layout
@@ -83,6 +84,24 @@ class AbsolutePositioningExample(QWidget):
         self.build_button.setMinimumWidth(145)
         self.build_button.move(250, 150)
  
+=======
+        img_path = "C:\\Users\\cxz\\Pictures\\shipping.png"
+        
+        scn = QGraphicsScene()
+        view = QGraphicsView(scn,self)
+         
+        pixmap = QPixmap(img_path)
+        gfxPixItem = scn.addPixmap(pixmap)
+        item = scn.addPixmap(pixmap)
+        view.fitInView(item)
+        
+        view.show()
+        
+#         self.label.setPixmap(img)
+#         self.label.show()
+        
+    
+>>>>>>> origin/master
     def run(self):
         # Show the form
         self.show()
@@ -90,5 +109,19 @@ class AbsolutePositioningExample(QWidget):
         qt_app.exec_()
  
 # Create an instance of the application window and run it
-app = AbsolutePositioningExample()
+app = MyWidget()
 app.run()
+
+
+# scn = QGraphicsScene()
+# view = QGraphicsView(scn)
+# 
+# pixmap = QPixmap("C:\\Users\\cxz\\Pictures\\shipping.png")
+# gfxPixItem = scn.addPixmap(pixmap)
+# 
+# view.fitInView(gfxPixItem)
+# view.show()
+# 
+# sys.exit(qt_app.exec_())
+
+
